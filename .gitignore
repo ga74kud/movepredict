@@ -1,6 +1,4 @@
 venv
 .idea
 build
-dist
-*.egg-info
-outdated
+data
