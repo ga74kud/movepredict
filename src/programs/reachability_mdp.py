@@ -16,9 +16,10 @@ def only_mdp(params):
     R = {'35': 100}
     mdp_challenge = {'S': S, 'R': R, 'T': T, 'P': P}
     dict_mdp = md.start_mdp(params, mdp_challenge)
-    reach_set = md.reach_n_steps(strt_pnt, mdp_challenge, dict_mdp, params, steps=8)
+    reach_set = md.reach_n_steps(strt_pnt, mdp_challenge, dict_mdp, params, steps=10)
     optimal_traj = md.get_trajectory(strt_pnt, dict_mdp, reach_set)
-    scatter_value_function(x, y, np.array(dict_mdp['U']), dict_mdp, R, optimal_traj)
+    plot_arrows_path(x, y, optimal_traj)
+    scatter_value_function(x, y, np.array(dict_mdp['U']), dict_mdp, R)
     plt_show()
     Omega_0 = {'c': np.matrix([[0],
                                [0],
@@ -44,8 +45,19 @@ def only_mdp(params):
          }
     zonoset = reachab.reach(Omega_0, U, params)
 
-def scatter_value_function(x, y, value_function, dict_mdp, R, optimal_traj):
-    fig, ax = plt.subplots()
+def plot_arrows_path(x, y, optimal_traj):
+    x_pos = []
+    y_pos = []
+    for wlt in optimal_traj:
+        x_pos.append(x[np.int(wlt)])
+        y_pos.append(y[np.int(wlt)])
+    for i in range(0, len(x_pos)-1):
+        x_dif = x_pos[i+1] - x_pos[i]
+        y_dif = y_pos[i + 1] - y_pos[i]
+        plt.arrow(x_pos[i], y_pos[i], x_dif, y_dif,
+              fc="green", ec='blue', alpha=.65, width=.4,
+              head_width=1.4, head_length=1)
+def scatter_value_function(x, y, value_function, dict_mdp, R):
     S=dict_mdp['S']
     N=len(x)
     colors = value_function
