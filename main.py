@@ -6,43 +6,15 @@
 # Released under GNU GENERAL PUBLIC LICENSE
 # email michael.hartmann@v2c2.at
 # -------------------------------------------------------------
-from source.preprocessing.dataprocessing import *
-import reachab
-import numpy as np
-import logging
+from src.programs.only_reachability import *
+from src.programs.reachability_mdp import *
+
 import argparse
 import definitions
-def test_zonoset_computation(params):
-    Omega_0 = {'c': np.matrix([[0],
-                               [0],
-                               [10],
-                               [3]
-                               ]),
-               'g': np.matrix([[1, -1],
-                               [1, 1],
-                               [0, 0],
-                               [0, 0]
-                               ])
-               }
-    U = {'c': np.matrix([[0],
-                         [0],
-                         [0],
-                         [0],
-                         ]),
-         'g': np.matrix([[1, 0, 1],
-                         [1, 1, 0],
-                         [0, 0, 0],
-                         [0, 0, 0]
-                         ])
-         }
-    zonoset=reachab.reach(Omega_0, U, params)
-    logging.info("Numbers in num_list are: {}".format(' '.join(map(str, zonoset))))
-    obj=dataprocessing(params)
-    None
+import datareader
+import os
+from src.main_loop import *
 
-
-def test_reachab():
-    reachab.test_me()
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--box_function', '-box', type=str, help='choices: without_box, with_box',
@@ -50,18 +22,29 @@ def main():
     parser.add_argument('--visualization', '-vis', type=str, help='y, n',
                         default='y', required=False)
     parser.add_argument('--time_horizon', '-T', type=float, help='value like: T=2.2', default=2.2, required=False)
-    parser.add_argument('--steps', '-N', type=int, help='value like N=4', default=4, required=False)
+    parser.add_argument('--steps', '-N', type=int, help='value like N=4', default=6, required=False)
     parser.add_argument('--debug', '-deb', type=str, help='(y,n)', default='n', required=False)
     parser.add_argument('--window_x', '-wix', type=int, help='windowsize in x-direction for savgol_filter', default=101, required=False)
     parser.add_argument('--window_y', '-wiy', type=int, help='windowsize in y-direction for savgol_filter', default=101, required=False)
     parser.add_argument('--poly_x', '-pox', type=int, help='polygon order in x-direction for savgol_filter', default=2, required=False)
     parser.add_argument('--poly_y', '-poy', type=int, help='polygon order in y-direction for savgol_filter', default=2, required=False)
+    parser.add_argument('--program', '-pro', type=str, help='a) only_reachability', default='only_reachability', required=False)
+    parser.add_argument('--face_color', '-facol', type=str, help='name: orange, green or values', default='cyan',
+                        required=False)
+    parser.add_argument('--gamma', '-gam', type=float, help='gamma=0.9',
+                        default='0.9', required=False)
+    parser.add_argument('--x_grid', '-xgr', type=int, help='x_grid=5',
+                        default='8', required=False)
+    parser.add_argument('--y_grid', '-ygr', type=int, help='y_grid=5',
+                        default='5', required=False)
 
     args = parser.parse_args()
     params = vars(args)
-    params['PROJECT_ROOT']=get_project_root()
+    params['PROJECT_ROOT']=definitions.get_project_root()
     if (params['debug'] == 'y'):
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-    test_zonoset_computation(params)
+
+    only_mdp(params)
+
 if __name__ == '__main__':
     main()
