@@ -1,51 +1,7 @@
-import matplotlib.pyplot as plt
-import reachab
 import numpy as np
+import matplotlib.pyplot as plt
 import md_pro as md
-import logging
 
-
-
-def only_mdp(params):
-    strt_pnt = '0'
-    P = md.get_meshgrid_points(params)
-    x,y,z=get_xyz(P)
-    # Topology
-    T, S = md.get_simple_topology_for_regular_grid(params, P)
-    # rewards
-    R = {'35': 100}
-    mdp_challenge = {'S': S, 'R': R, 'T': T, 'P': P}
-    dict_mdp = md.start_mdp(params, mdp_challenge)
-    reach_set = md.reach_n_steps(strt_pnt, mdp_challenge, dict_mdp, params, steps=10)
-    optimal_traj = md.get_stochastic_trajectory(strt_pnt, dict_mdp, steps=20)
-    print_info(dict_mdp, optimal_traj)
-    plot_topology(x, y, dict_mdp)
-    plot_arrows_path(x, y, optimal_traj)
-    scatter_value_function(x, y, np.array(dict_mdp['U']), dict_mdp, R)
-    plt_show()
-    Omega_0 = {'c': np.matrix([[0],
-                               [0],
-                               [10],
-                               [3]
-                               ]),
-               'g': np.matrix([[1, -1],
-                               [1, 1],
-                               [0, 0],
-                               [0, 0]
-                               ])
-               }
-    U = {'c': np.matrix([[0],
-                         [0],
-                         [0],
-                         [0],
-                         ]),
-         'g': np.matrix([[1, 0],
-                         [1, 1],
-                         [0, 0],
-                         [0, 0]
-                         ])
-         }
-    #zonoset = reachab.reach(Omega_0, U, params)
 def print_info(dict_mdp, optimal_traj):
     print(optimal_traj)
     for idx, wlt in enumerate(optimal_traj):
@@ -77,7 +33,7 @@ def plot_arrows_path(x, y, optimal_traj):
         x_dif = x_pos[i+1] - x_pos[i]
         y_dif = y_pos[i + 1] - y_pos[i]
         plt.arrow(x_pos[i], y_pos[i], x_dif, y_dif,
-              fc="green", ec='green', alpha=.065, width=.4,
+              fc="red", ec='red', alpha=.165, width=.4,
               head_width=1.4, head_length=1)
 def scatter_value_function(x, y, value_function, dict_mdp, R):
     S=dict_mdp['S']
@@ -103,3 +59,38 @@ def get_xyz(P):
     y = np.array([P[i][1] for i in P])
     z = np.array([P[i][2] for i in P])
     return x,y,z
+'''
+    Plot the trajectories of two agents
+'''
+def plot_trajectories_two_agents(traj_A, traj_B):
+    for i in range(0, len(traj_A)-1):
+        pos_A=traj_A[i]
+        nxt_pos_A = traj_A[i+1]
+        pos_B = traj_B[i]
+        nxt_pos_B = traj_B[i + 1]
+        plt.arrow(pos_A[0], pos_A[1], nxt_pos_A[0]-pos_A[0], nxt_pos_A[1]-pos_A[1],
+              fc="red", ec='red', alpha=.165, width=.4,
+              head_width=1.4, head_length=1)
+        plt.arrow(pos_B[0], pos_B[1], nxt_pos_B[0] - pos_B[0], nxt_pos_B[1] - pos_B[1],
+                  fc="green", ec='red', alpha=.165, width=.4,
+                  head_width=1.4, head_length=1)
+
+'''
+    Compute xva with force 
+'''
+def comp_xva(F, params):
+    erg=[]
+    xva=[0, 0]
+    erg.append(xva)
+    for i in range(0, len(F)):
+        xva=next_xva(xva, F[i], params)
+        erg.append(xva)
+    return erg
+
+def next_xva(xva, F, params):
+    Ts = params['Ts']
+    x = xva[0]
+    v = xva[1]
+    x = Ts * v + x
+    v = Ts * F + v
+    return [x, v]
