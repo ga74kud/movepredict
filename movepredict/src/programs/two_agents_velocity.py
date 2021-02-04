@@ -1,4 +1,11 @@
-
+# -------------------------------------------------------------
+# code developed by Michael Hartmann during his Ph.D.
+# Movement Prediction
+#
+# (C) 2020-2021 Michael Hartmann, Graz, Austria
+# Released under GNU GENERAL PUBLIC LICENSE
+# email michael.hartmann@v2c2.at
+# -------------------------------------------------------------
 
 import md_pro as md
 from movepredict.src.programs.helpfunctions import *
@@ -7,34 +14,31 @@ from movepredict.src.programs.helpfunctions import *
 '''
 def two_agents_without_interaction_common_playground_different_velocities(params):
     params['Ts'] = params['time_horizon'] / (params['steps'] + 1)
-    F_A = [8, 8, 0, 0, 0]
-    F_B = [4, 4, 0, 0, 0]
+    F_A = [8, 8, 8, 0, 0, 0, 0, -4, 0, 0, 0, 0, 0, 0, 0, 0 ]
+    F_B = [4, 4, 4, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
     states_A = comp_xva(F_A, params)
     states_B = comp_xva(F_B, params)
     plot_xva(states_A, states_B)
+    path_A, path_B=two_agents_without_interaction_common_playground(params)
+    cum_dist_A = md.cumulative_distance_without_filtering(path_A)
+    cum_dist_B = md.cumulative_distance_without_filtering(path_B)
+    plot_two_movements(path_A, cum_dist_A, states_A, path_B, cum_dist_B, states_B)
+    None
 
 '''
     plot xva
 '''
 def plot_xva(states_A, states_B):
     fig, (ax1, ax2)  = plt.subplots(2,1)
-    x_A=[i[0] for i in states_A]
-    v_A = [i[1] for i in states_A]
-    x_B = [i[0] for i in states_B]
-    v_B = [i[1] for i in states_B]
+    x_A, v_A = get_xv(states_A)
+    x_B, v_B = get_xv(states_B)
 
     ax1.plot(x_A)
     ax1.plot(x_B)
-    #ax1.title('Positions')
-    #ax1.xlabel('Step')
-    #ax1.ylabel('Positions')
     ax1.grid()
     ax2.plot(v_A)
     ax2.plot(v_B)
-    #ax2.title('Velocities')
     ax2.grid()
-    #ax2.xlabel('Step')
-    #ax2.ylabel('Velocities')
     plt.show()
 '''
     agents without interaction coming together in the same environment

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import md_pro as md
-
+import scipy.spatial as scs
 def print_info(dict_mdp, optimal_traj):
     print(optimal_traj)
     for idx, wlt in enumerate(optimal_traj):
@@ -87,6 +87,9 @@ def comp_xva(F, params):
         erg.append(xva)
     return erg
 
+'''
+    Difference equation 
+'''
 def next_xva(xva, F, params):
     Ts = params['Ts']
     x = xva[0]
@@ -94,3 +97,34 @@ def next_xva(xva, F, params):
     x = Ts * v + x
     v = Ts * F + v
     return [x, v]
+
+'''
+    get positions and velocities for states A and B
+'''
+def get_xv(states):
+    x = [i[0] for i in states]
+    v = [i[1] for i in states]
+    return x, v
+
+'''
+    Arrows with cumulative distance 
+'''
+def plot_arrows_cum_dist(path, cum_dist, states):
+    new_traj=[]
+    x, v = get_xv(states)
+    a=np.array(x)
+    b=np.array(cum_dist)
+    for my_a in a:
+        dif_vec=(b-my_a)**2
+        idx=np.argmin(dif_vec)
+        new_elem=path[idx, :]
+        new_traj.append(new_elem)
+    new_traj=np.array(new_traj)
+    return new_traj
+
+
+def plot_two_movements(path_A, cum_dist_A, states_A, path_B, cum_dist_B, states_B):
+    traj_A=plot_arrows_cum_dist(path_A, cum_dist_A, states_A)
+    traj_B=plot_arrows_cum_dist(path_B, cum_dist_B, states_B)
+    plot_trajectories_two_agents(traj_A, traj_B)
+    plt_show()
