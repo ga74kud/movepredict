@@ -16,10 +16,12 @@ def two_agents_without_interaction_common_playground_different_velocities(params
     params['Ts'] = params['time_horizon'] / (params['steps'] + 1)
     F_A = [8, 8, 8, 0, 0, 0, 0, -4, 0, 0, 0, 0, 0, 0, 0, 0 ]
     F_B = [4, 4, 4, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+    F_A = [8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    F_B = [8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     states_A = comp_xva(F_A, params)
     states_B = comp_xva(F_B, params)
     plot_xva(states_A, states_B)
-    path_A, path_B=two_agents_without_interaction_common_playground(params)
+    path_A, path_B=two_agents_without_interaction_common_playground_123(params)
     cum_dist_A = md.cumulative_distance_without_filtering(path_A)
     cum_dist_B = md.cumulative_distance_without_filtering(path_B)
     plot_two_movements(path_A, cum_dist_A, states_A, path_B, cum_dist_B, states_B)
@@ -33,17 +35,22 @@ def plot_xva(states_A, states_B):
     x_A, v_A = get_xv(states_A)
     x_B, v_B = get_xv(states_B)
 
-    ax1.plot(x_A)
-    ax1.plot(x_B)
+    ax1.plot(x_A, label='Position A')
+    ax1.plot(x_B, label='Position B')
     ax1.grid()
-    ax2.plot(v_A)
-    ax2.plot(v_B)
+    ax2.plot(v_A, label='Velocity A')
+    ax2.plot(v_B, label='Velocity B')
     ax2.grid()
+    ax1.set_ylabel('Positions [m]')
+    ax2.set_xlabel('Time [s]')
+    ax2.set_ylabel('Velocity [m/s]')
+    ax1.legend()
+    ax2.legend()
     plt.show()
 '''
     agents without interaction coming together in the same environment
 '''
-def two_agents_without_interaction_common_playground(params):
+def two_agents_without_interaction_common_playground_123(params):
     strt_pnt_A = '16'
     strt_pnt_B = '23'
     end_pnt_A ='23'

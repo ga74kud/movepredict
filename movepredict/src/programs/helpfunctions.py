@@ -127,4 +127,7 @@ def plot_two_movements(path_A, cum_dist_A, states_A, path_B, cum_dist_B, states_
     traj_A=plot_arrows_cum_dist(path_A, cum_dist_A, states_A)
     traj_B=plot_arrows_cum_dist(path_B, cum_dist_B, states_B)
     plot_trajectories_two_agents(traj_A, traj_B)
+    plt.axis([-10, 10, -10, 10])
+    plt.grid()
     plt_show()
+

@@ -10,7 +10,7 @@ from movepredict.src.programs.only_reachability import *
 from movepredict.src.programs.reachability_mdp import *
 from movepredict.src.programs.two_agents import *
 from movepredict.src.programs.two_agents_velocity import *
-
+from movepredict.src.programs.mdp_reachab import *
 import argparse
 import definitions
 from outdated.main_loop import *
@@ -28,7 +28,7 @@ def main():
     parser.add_argument('--window_y', '-wiy', type=int, help='windowsize in y-direction for savgol_filter', default=101, required=False)
     parser.add_argument('--poly_x', '-pox', type=int, help='polygon order in x-direction for savgol_filter', default=2, required=False)
     parser.add_argument('--poly_y', '-poy', type=int, help='polygon order in y-direction for savgol_filter', default=2, required=False)
-    parser.add_argument('--program', '-pro', type=str, help='a) only_reachability, b) only_mdp, c) two_agents_no_interaction d) two_agents_no_interaction_velocity', default='two_agents_no_interaction_velocity', required=False)
+    parser.add_argument('--program', '-pro', type=str, help='a) only_reachability, b) only_mdp, c) two_agents_no_interaction d) two_agents_no_interaction_velocity', default='mdp_reachab', required=False)
     parser.add_argument('--face_color', '-facol', type=str, help='name: orange, green or values', default='cyan',
                         required=False)
     parser.add_argument('--gamma', '-gam', type=float, help='gamma=0.9',
@@ -45,6 +45,9 @@ def main():
     params['PROJECT_ROOT']=definitions.get_project_root()
     if (params['debug'] == 'y'):
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    #######################
+    ### PROGRAM OPTIONS ###
+    #######################
     if(params['program']=='only_reachability'):
         only_one_reachability(params)
     elif(params['program']=='only_mdp'):
@@ -53,6 +56,10 @@ def main():
         two_agents_without_interaction_common_playground(params)
     elif (params['program'] == 'two_agents_no_interaction_velocity'):
         two_agents_without_interaction_common_playground_different_velocities(params)
+    elif(params['program'] == 'mdp_reachab'):
+        mdp_reachab()
+    # elif (params['program'] == 'reach_mdp'):
+    #     reach_mdp(params)
 
 
 if __name__ == '__main__':
